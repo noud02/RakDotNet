@@ -35,7 +35,7 @@ namespace RakDotNet.TcpUdp
         private Task _tcpAcceptTask;
         private Task _udpRecvTask;
 
-        private bool _tcpStarted;
+        public bool TcpStarted { get; set; }
 
         public TcpUdpServer(int port, string password, X509Certificate cert = null, int pingInterval = 5000)
         {
@@ -54,7 +54,7 @@ namespace RakDotNet.TcpUdp
 
             for (var i = 0; i < password.Length; i++) _password[i] = (byte) password[i];
 
-            _tcpStarted = false;
+            TcpStarted = false;
 
             _sendSeqNum = 0;
         }
@@ -141,12 +141,13 @@ namespace RakDotNet.TcpUdp
         {
             return Task.Run(async () =>
             {
-                if (_tcpStarted)
+                if (TcpStarted)
                     _tcpServer.Stop();
 
                 _tcpServer.Start();
-                _tcpStarted = true;
-                
+
+                TcpStarted = true;
+
                 while (true)
                 {
                     cancelToken.ThrowIfCancellationRequested();
